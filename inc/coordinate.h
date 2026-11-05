@@ -46,7 +46,7 @@ public:
 	double altitude(void);
 
 	/* tangential point の座標を求める */
-	Geocoordinate tangential_point(PlanetParam earth, SatelliteParam satellite);
+	Geocoordinate tangential_point(PlanetParam earth, SatelliteParam satellite);/* 静止衛星（赤道）のみ対応！ */
 };
 
 

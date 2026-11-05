@@ -25,8 +25,9 @@ struct Sasktran2ObserverGeometry {
 Sasktran2TangentGeometry to_sasktran2_geometry(
 	const PlanetParam& earth,
 	const SatelliteParam& satellite,
-	const Geocoordinate tangential_point,
-	const double sza, const double azimuth
+	LookingDirection ld,
+	const double sza,
+	const double azimuth
 );
 
 

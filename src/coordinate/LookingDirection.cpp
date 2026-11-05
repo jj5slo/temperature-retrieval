@@ -24,7 +24,7 @@ double LookingDirection::altitude(void){
 	return pAltitude;
 }
 
-Geocoordinate LookingDirection::tangential_point(PlanetParam earth, SatelliteParam satellite){
+Geocoordinate LookingDirection::tangential_point(PlanetParam earth, SatelliteParam satellite){/* 静止衛星（赤道）のみ対応！ */
 	const double R = earth.radius() + pAltitude;
 	const double Rs = satellite.radius();
 

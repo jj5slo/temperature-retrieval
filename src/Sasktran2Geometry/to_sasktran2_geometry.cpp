@@ -15,7 +15,7 @@
 Sasktran2TangentGeometry to_sasktran2_geometry(
 	const PlanetParam& earth,
 	const SatelliteParam& satellite,
-	Geocoordinate tangential_point,
+	LookingDirection ld,
 	double sza,
 	double azimuth
 ){
@@ -24,11 +24,8 @@ Sasktran2TangentGeometry to_sasktran2_geometry(
 	const double earth_radius = earth.radius();
 	const double satellite_radius = satellite.radius();
 
-	const double tangent_altitude =
-		tangential_point.altitude();
-
-	const double observer_altitude =
-		satellite_radius - earth_radius;
+	const double tangent_altitude = ld.altitude();
+	const double observer_altitude = satellite_radius - earth_radius;
 
 	// Input validation
 	if (!std::isfinite(earth_radius) || !std::isfinite(satellite_radius) || earth_radius <= 0.0 || satellite_radius <= earth_radius) {
@@ -40,6 +37,8 @@ Sasktran2TangentGeometry to_sasktran2_geometry(
 	if (!std::isfinite(sza) || !std::isfinite(azimuth) || sza < 0.0 || sza > 180.0) {
 		throw std::invalid_argument( std::string(__func__) + ": Invalid solar angles" );
 	}
+
+	auto tangential_point = ld.tangential_point(earth, satellite);
 
 	auto r = tangential_point.r();
 	AndoLab::Vector3d<double> satellite_position( satellite_radius, 0.0, 0.0 );
@@ -53,8 +52,7 @@ Sasktran2TangentGeometry to_sasktran2_geometry(
 	if (!std::isfinite(cos_angle) || std::abs(cos_angle) > 1.0e-8) {
 		throw std::invalid_argument( std::string(__func__) + ": Position is not a tangent point" );
 	}
-
-
+	
 	// Viewing direction at the tangent point
 	double umu = 0.0;
 	double viewing_azimuth = 0.0;
