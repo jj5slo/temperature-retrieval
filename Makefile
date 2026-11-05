@@ -28,12 +28,13 @@ OBJS = \
 	cross_point_at_altitude.o \
 	sensor_direction.o \
 	solar_direction.o \
-	translate_coordinate.o
+	translate_coordinate.o\
+	to_sasktran2_geometry.o
 
 OBJ_PATHS = $(addprefix obj/, $(OBJS))
 
 # Source directories
-vpath %.cpp src:src/Atmosphere:src/coordinate
+vpath %.cpp src:src/Atmosphere:src/coordinate:src/Sasktran2Geometry
 
 # ==================================================
 # Build

@@ -34,8 +34,8 @@ AndoLab::Vector3d <double> rotate_theta(
 
 class LookingDirection{
 private:
-	double pAltitude{0.0};	/* [m] */
 	double pAlpha{0.0};		/* [deg] */
+	double pAltitude{0.0};	/* [m] */
 public:
 	/* LookingDirection.cpp */
 	/* アクセサ */
