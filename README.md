@@ -1,0 +1,5 @@
+temperature-retrieval
+
+libradtran-interfaceのRTEソルバ部分（MYSTIC）のsasktran2による代替およびリファクタリング・MYSTICとの比較用
+
+
