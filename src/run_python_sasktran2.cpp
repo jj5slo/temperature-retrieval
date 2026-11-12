@@ -59,11 +59,10 @@ std::string run_python_sasktran2(
 	posix_spawn_file_actions_t actions;
 	int error = posix_spawn_file_actions_init(&actions);
 	if (error != 0) {
-		posix_spawn_file_actions_destroy(&actions);
 		close(fd[0]);
 		close(fd[1]);
 		throw std::runtime_error(
-			"spawn actions failed: " +
+			"posix_spawn_file_actions_init failed: " +
 			std::string(std::strerror(error))
 		);
 	}
@@ -79,6 +78,15 @@ std::string run_python_sasktran2(
 		error = posix_spawn_file_actions_addclose(
 			&actions, fd[1]
 		);// 標準出力にしたので子プロセスでは不要
+	if (error != 0) {
+		posix_spawn_file_actions_destroy(&actions);
+		close(fd[0]);
+		close(fd[1]);
+		throw std::runtime_error(
+			"posix_spawn file actions failed: " +
+			std::string(std::strerror(error))
+		);
+	}
 
 	pid_t pid;
 	error = posix_spawn(

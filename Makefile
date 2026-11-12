@@ -30,7 +30,7 @@ OBJS = \
 	solar_direction.o \
 	translate_coordinate.o\
 	to_sasktran2_geometry.o\
-	run_python_sasktran2.o
+	PythonSasktran2.o
 
 OBJ_PATHS = $(addprefix obj/, $(OBJS))
 
