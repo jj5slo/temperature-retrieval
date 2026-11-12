@@ -1,3 +1,5 @@
 temperature-retrieval
 obj/*
-
+.venv/
+__pycache__/
+*.pyc
