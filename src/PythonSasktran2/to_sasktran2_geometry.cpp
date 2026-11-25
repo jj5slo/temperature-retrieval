@@ -4,7 +4,7 @@
  *
  */
 
-#include "Sasktran2Geometry.h"
+#include "PythonSasktran2.h"
 #include "FixedParams.h"
 #include "coordinate.h"
 

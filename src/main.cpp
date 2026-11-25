@@ -21,7 +21,6 @@
 
 #include "FixedParams.h"
 #include "coordinate.h"
-#include "Sasktran2Geometry.h"
 #include "PythonSasktran2.h"
 #include "avoid_dupe.h"
 // #include "run_python_sasktran2.h"
@@ -39,10 +38,10 @@ int main()
 		/* ==== Pythonの起動 ==== */
 		const std::string python = std::filesystem::absolute(".venv/bin/python").string();
 		const std::string script = std::filesystem::absolute("python/python_daemon.py").string();
-		PythonSasktran2 engine(python, script);	
+		PythonSasktran2 engine(python, script, Sasktran2Accuracy());	
 		/* ==== */
 		/* ==== 開始時刻保存, 保存先ディレクトリ作成 ==== */
-		std::string DIR_RESULT = "/lhome/sano2/SANO/research/estimate-profile/temperature_retrieval/sandbox/";
+		std::string DIR_RESULT = "/lhome/sano2/SANO/research/estimate-profile/temperature-retrieval/sandbox/";
 		auto starttime = std::chrono::system_clock::now();
 		auto startsec = std::chrono::duration_cast<std::chrono::seconds>(starttime.time_since_epoch()).count();
 		std::string secid = std::to_string(startsec);
@@ -124,6 +123,16 @@ int main()
 		for(int i=0; i<100; ++i){
 			std::cout << i <<" "<< radiances[i] << std::endl;
 		}
+		std::ofstream result_file(DIR_RESULT+"/result.txt");
+		if(!result_file){
+			std::cerr << "result.txt could not make!" << std::endl;
+			return 1;
+		}
+		result_file << "#altitude radiance" << std::endl;
+		for(int i=0; i<100; ++i){
+			result_file << i <<" "<< radiances[i] << std::endl;
+		}
+		result_file.close();
 
 		return 0;
 	}

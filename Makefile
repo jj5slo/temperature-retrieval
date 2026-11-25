@@ -36,7 +36,7 @@ OBJS = \
 OBJ_PATHS = $(addprefix obj/, $(OBJS))
 
 # Source directories
-vpath %.cpp src:src/Atmosphere:src/coordinate:src/Sasktran2Geometry
+vpath %.cpp src:src/Atmosphere:src/coordinate:src/PythonSasktran2
 
 # ==================================================
 # Build

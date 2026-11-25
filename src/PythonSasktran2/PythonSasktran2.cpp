@@ -13,12 +13,42 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include <vector>
+#include <sstream>
+#include <iomanip>
+#include <limits>
+
 extern char** environ;// このプログラム実行時の環境変数
 
 PythonSasktran2::PythonSasktran2(
 	const std::string& python,
-	const std::string& script
+	const std::string& script,
+	const Sasktran2Accuracy& accuracy
 ){
+	// accuracy のチェック
+	if (accuracy.num_sza < 1) {
+		throw std::invalid_argument(
+			"PythonSasktran2: num_sza must be positive"
+		);
+	}
+	if (accuracy.num_successive_orders_iterations < 1) {
+		throw std::invalid_argument(
+			"PythonSasktran2: iterations must be positive"
+		);
+	}
+	if (!std::isfinite(accuracy.successive_orders_relative_tolerance) ||
+		accuracy.successive_orders_relative_tolerance < 0.0) {
+		throw std::invalid_argument(
+			"PythonSasktran2: invalid relative tolerance"
+		);
+	}
+	if (!std::isfinite(accuracy.successive_orders_absolute_tolerance) ||
+		accuracy.successive_orders_absolute_tolerance < 0.0) {
+		throw std::invalid_argument(
+			"PythonSasktran2: invalid absolute tolerance"
+		);
+	}	
+
 	int to_child[2];
 	int from_child[2];
 	if (pipe(to_child) != 0) {
@@ -72,18 +102,42 @@ PythonSasktran2::PythonSasktran2(
 		);
 	}
 
-	char* argv[] = {
-		const_cast<char*>(python.c_str()),
-		const_cast<char*>(script.c_str()),
-		nullptr
+	// doubleを精度を落とさず文字列に変換する
+	auto double_to_string = [](double value) {
+		std::ostringstream oss;
+		oss << std::setprecision(std::numeric_limits<double>::max_digits10)
+			<< value;
+		return oss.str();
 	};
+	
+	// Pythonに渡すコマンドライン引数
+	std::vector<std::string> arguments = {
+		python,
+		script,
+		std::to_string(accuracy.num_sza),
+		std::to_string(accuracy.num_successive_orders_incoming),
+		std::to_string(accuracy.num_successive_orders_outgoing),
+		std::to_string(accuracy.num_successive_orders_iterations),
+		double_to_string(accuracy.successive_orders_relative_tolerance),
+		double_to_string(accuracy.successive_orders_absolute_tolerance)
+	};
+	
+	// posix_spawn()用のargvを構築
+	std::vector<char*> argv;
+	argv.reserve(arguments.size() + 1);
+	
+	for (std::string& argument : arguments) {
+		argv.push_back(argument.data());
+	}
+	
+	argv.push_back(nullptr);
 
 	err = posix_spawn(
 		&pid_,
 		python.c_str(),
 		&actions,
 		nullptr,
-		argv,
+		argv.data(),
 		environ
 	);
 
